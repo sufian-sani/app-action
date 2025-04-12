@@ -19,14 +19,13 @@ spec:
         - name: two-tier-app
           image: bongodev/flask-attendance-app:latest
           env:
-            - name: MYSQL_HOST
-              value: mysql          # this is your mysql's service clusture IP, Make sure to change it with yours
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_ROOT_PASSWORD
-            - name: MYSQL_DB
+            - name: DB_HOST
+              value: mysql # this is your mysql's service clusture IP, Make sure to change it with yours
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+            - name: DB_NAME
               value: "attendance_db"
           ports:
             - containerPort: 5000
