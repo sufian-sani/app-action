@@ -21,7 +21,7 @@ spec:
           env:
             - name: DB_HOST
               value: mysql # this is your mysql's service clusture IP, Make sure to change it with yours
-            - name: DB_USER
+            - name: DB_USER #according to database.py file and db.config
               value: "root"
             - name: DB_PASSWORD
               value: "root"
