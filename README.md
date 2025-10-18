@@ -17,11 +17,11 @@
 
 
 ### From repository settings, add the folllowing Secrets
-AWS_HOST >> your EC2 machine_ip
-AWS_KEY >> key.pem text
-AWS_USER >> ubuntu, unless you created another user
-DOCKER_PASSWORD >> DockerHub PAT
-DOCKER_USERNAME >> DockerHub user_name
+    AWS_HOST >> your EC2 machine_ip
+    AWS_KEY >> key.pem text
+    AWS_USER >> ubuntu, unless you created another user
+    DOCKER_PASSWORD >> DockerHub PAT
+    DOCKER_USERNAME >> DockerHub user_name
 
 ### Create a directory and copy the code from action.yaml to main.yaml filr
 
