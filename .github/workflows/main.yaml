@@ -13,14 +13,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Debug Docker secrets
-        run: |
-          echo "Docker Username length: ${#DOCKER_USERNAME}"
-          echo "Docker Password length: ${#DOCKER_PASSWORD}"
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -49,3 +41,42 @@ jobs:
 
             # Set up Docker network (if needed)
             docker network create app_network || true
+
+            # Stop and remove existing MySQL and Flask containers if they exist
+            docker stop mysql-db || true
+            docker rm mysql-db || true
+            docker stop flask-app || true
+            docker rm flask-app || true
+
+            # Run MySQL container
+            docker run -d \
+              --name mysql-db \
+              --network app_network \
+              -e MYSQL_ROOT_PASSWORD=root \
+              -e MYSQL_DATABASE=attendance_db \
+              -p 3306:3306 \
+              mysql:latest
+
+            # Wait for MySQL to fully start
+            echo "Waiting for MySQL to initialize..."
+            sleep 30
+
+            # Create database (this is optional if you want to ensure it exists)
+            docker exec mysql-db mysql -uroot -prootpassword -e "CREATE DATABASE IF NOT EXISTS attendance_db;"
+
+            # Pull latest Flask app
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/flask-attendance-app
+
+            # Run Flask app container
+            docker run -d \
+              --name flask-app \
+              --network app_network \
+              -p 5000:5000 \
+              -e DB_HOST=mysql-db \
+              -e DB_USER=root \
+              -e DB_PASSWORD=root \
+              -e DB_NAME=attendance_db \
+              ${{ secrets.DOCKER_USERNAME }}/flask-attendance-app
+
+          EOF
